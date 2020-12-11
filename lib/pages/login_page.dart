@@ -81,6 +81,7 @@ class __FormState extends State<_Form> {
             keyboardType: TextInputType.text,
             textController: passwordController,
             obscure: true,
+            inputAction: TextInputAction.done,
           ),
           RaisedButton(onPressed: () {
             print(emailCtrl.text);
