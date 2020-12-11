@@ -47,7 +47,7 @@ class LoginPage extends StatelessWidget {
             ),
           ),
           Text(
-            'Crea una',
+            'Regístrate',
             style: TextStyle(
               color: Colors.blue[600],
               fontWeight: FontWeight.bold,
