@@ -9,6 +9,7 @@ class InputField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.obscure = false,
     this.inputAction = TextInputAction.next,
+    this.onSubmitted,
   }) : super(key: key);
 
   final IconData icon;
@@ -16,6 +17,7 @@ class InputField extends StatelessWidget {
   final TextEditingController textController;
   final TextInputType keyboardType;
   final TextInputAction inputAction;
+  final Function(String) onSubmitted;
   final bool obscure;
 
   @override
@@ -39,6 +41,7 @@ class InputField extends StatelessWidget {
         keyboardType: this.keyboardType,
         obscureText: this.obscure,
         textInputAction: this.inputAction,
+        onSubmitted: this.onSubmitted,
         decoration: InputDecoration(
           prefixIcon: Icon(this.icon),
           border: InputBorder.none,

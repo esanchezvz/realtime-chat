@@ -82,10 +82,31 @@ class __FormState extends State<_Form> {
             textController: passwordController,
             obscure: true,
             inputAction: TextInputAction.done,
+            onSubmitted: (_) {
+              print('Handle form submission!');
+            },
           ),
-          RaisedButton(onPressed: () {
-            print(emailCtrl.text);
-          })
+          RaisedButton(
+            elevation: 2,
+            highlightElevation: 5,
+            color: Colors.blue,
+            shape: StadiumBorder(),
+            onPressed: () {
+              print(emailCtrl.text);
+              print(passwordController.text);
+            },
+            child: Container(
+              width: double.infinity,
+              child: Center(
+                child: Text(
+                  'Ingresar',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
