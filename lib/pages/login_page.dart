@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
               children: [
                 Logo(width: 200, withText: true),
                 _Form(),
-                _renderLabels(),
+                _renderLabels(context),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
@@ -34,7 +34,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _renderLabels() {
+  Widget _renderLabels(BuildContext ctx) {
     return Container(
       child: Column(
         children: [
@@ -46,12 +46,17 @@ class LoginPage extends StatelessWidget {
               fontWeight: FontWeight.w300,
             ),
           ),
-          Text(
-            'Regístrate',
-            style: TextStyle(
-              color: Colors.blue[600],
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+          GestureDetector(
+            onTap: () {
+              Navigator.pushReplacementNamed(ctx, 'register');
+            },
+            child: Text(
+              'Regístrate',
+              style: TextStyle(
+                color: Colors.blue[600],
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
           )
         ],
@@ -75,6 +80,11 @@ class __FormState extends State<_Form> {
       margin: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
       child: Column(
         children: [
+          Text(
+            'Inicia Sesión',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
           InputField(
             icon: Icons.mail_outline,
             placeholder: 'Correo Electrónico',
