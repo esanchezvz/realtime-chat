@@ -14,7 +14,7 @@ class LoginPage extends StatelessWidget {
           children: [
             Logo(width: 200, withText: true),
             _Form(),
-            _Lables(),
+            _renderLabels(),
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Text(
@@ -24,6 +24,31 @@ class LoginPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _renderLabels() {
+    return Container(
+      child: Column(
+        children: [
+          Text(
+            '¿No tienes cuenta?',
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 15,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+          Text(
+            'Crea una',
+            style: TextStyle(
+              color: Colors.blue[600],
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          )
+        ],
       ),
     );
   }
@@ -60,35 +85,6 @@ class __FormState extends State<_Form> {
           RaisedButton(onPressed: () {
             print(emailCtrl.text);
           })
-        ],
-      ),
-    );
-  }
-}
-
-class _Lables extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Text(
-            '¿No tienes cuenta?',
-            style: TextStyle(
-              color: Colors.black54,
-              fontSize: 15,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Crea una',
-            style: TextStyle(
-              color: Colors.blue[600],
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          )
         ],
       ),
     );
