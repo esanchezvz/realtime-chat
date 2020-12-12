@@ -37,6 +37,15 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    // TODO cancel socket subscription
+    for (ChatMessage msg in _messages) {
+      msg.animationController.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
