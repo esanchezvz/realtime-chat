@@ -94,7 +94,7 @@ class __FormState extends State<_Form> {
       );
 
       if (res['success'] == true) {
-        _socketService.connect();
+        await _socketService.connect();
         Navigator.pushReplacementNamed(context, 'users');
       } else {
         alert(context, 'Ooops', '${res['message']}');

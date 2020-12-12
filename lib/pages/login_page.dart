@@ -92,7 +92,7 @@ class __FormState extends State<_Form> {
       );
 
       if (authenticated) {
-        socketService.connect();
+        await socketService.connect();
         Navigator.pushReplacementNamed(context, 'users');
       } else {
         alert(
