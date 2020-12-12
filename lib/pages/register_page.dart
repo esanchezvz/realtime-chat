@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:real_time_chat/services/auth.service.dart';
+import 'package:real_time_chat/services/socket.service.dart';
 import 'package:real_time_chat/utils/alert.dart';
 
 import 'package:real_time_chat/widgets/input_field.dart';
@@ -81,6 +82,7 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final _socketService = Provider.of<SocketService>(context);
 
     Future<void> _onSubmit() async {
       FocusScope.of(context).unfocus();
@@ -92,7 +94,7 @@ class __FormState extends State<_Form> {
       );
 
       if (res['success'] == true) {
-        // TODO connect to socket
+        _socketService.connect();
         Navigator.pushReplacementNamed(context, 'users');
       } else {
         alert(context, 'Ooops', '${res['message']}');

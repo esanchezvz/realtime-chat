@@ -4,6 +4,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:real_time_chat/models/user.dart';
 import 'package:real_time_chat/services/auth.service.dart';
+import 'package:real_time_chat/services/socket.service.dart';
 
 class UsersPage extends StatefulWidget {
   @override
@@ -43,6 +44,7 @@ class _UsersPageState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) {
     final _authService = Provider.of<AuthService>(context);
+    final _socketService = Provider.of<SocketService>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -62,7 +64,7 @@ class _UsersPageState extends State<UsersPage> {
             color: Colors.black87,
           ),
           onPressed: () {
-            // TODO disconnect socket server
+            _socketService.disconnect();
             AuthService.deleteToken();
             Navigator.pushReplacementNamed(context, 'login');
           },
