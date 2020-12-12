@@ -48,7 +48,7 @@ class RegisterPage extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(ctx, 'login');
+              Navigator.pushReplacementNamed(ctx, 'login');
             },
             child: Text(
               'Inicia Sesión',
