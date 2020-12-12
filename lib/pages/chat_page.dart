@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:real_time_chat/models/chat_response.dart';
 import 'package:real_time_chat/services/auth.service.dart';
 
 import 'package:real_time_chat/services/chat.service.dart';
@@ -30,6 +31,29 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     this.authService = Provider.of<AuthService>(context, listen: false);
 
     this.socketService.socket.on('message-sent', _onMessageListener);
+
+    _loadMessage(this.chatService.toUser.uid);
+  }
+
+  void _loadMessage(String userId) async {
+    List<Message> chat = await this.chatService.getChat(userId);
+
+    final history = chat.map(
+      (m) => new ChatMessage(
+        message: m.message,
+        uid: m.from,
+        animationController: new AnimationController(
+          duration: Duration(milliseconds: 250),
+          vsync: this,
+        )..forward(),
+      ),
+    );
+
+    print(history);
+
+    setState(() {
+      _messages.insertAll(0, history);
+    });
   }
 
   void _onMessageListener(dynamic payload) {

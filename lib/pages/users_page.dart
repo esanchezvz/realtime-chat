@@ -21,7 +21,6 @@ class _UsersPageState extends State<UsersPage> {
   void _onRefresh() async {
     try {
       this.users = await userService.getUsers();
-      print('${this.users}');
       setState(() {});
       _refreshCtrl.refreshCompleted();
     } catch (e) {

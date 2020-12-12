@@ -110,8 +110,6 @@ class AuthService with ChangeNotifier {
       'Content-Type': 'application/json',
     });
 
-    print(res.body);
-
     if (res.statusCode == 200) {
       final response = tokenResponseFromJson(res.body);
       this.user = response.data.user;
