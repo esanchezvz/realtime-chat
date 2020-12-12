@@ -4,6 +4,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:real_time_chat/models/user.dart';
 import 'package:real_time_chat/services/auth.service.dart';
+import 'package:real_time_chat/services/chat.service.dart';
 import 'package:real_time_chat/services/socket.service.dart';
 import 'package:real_time_chat/services/users.service.dart';
 
@@ -107,6 +108,11 @@ class _UsersPageState extends State<UsersPage> {
           borderRadius: BorderRadius.circular(100),
         ),
       ),
+      onTap: () {
+        final chatService = Provider.of<ChatService>(context, listen: false);
+        chatService.toUser = user;
+        Navigator.pushNamed(context, 'chat');
+      },
     );
   }
 }

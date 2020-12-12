@@ -1,7 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:real_time_chat/services/auth.service.dart';
+
+import 'package:real_time_chat/services/chat.service.dart';
+import 'package:real_time_chat/services/socket.service.dart';
 import 'package:real_time_chat/widgets/chat_msg.dart';
 
 class ChatPage extends StatefulWidget {
@@ -13,23 +17,35 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   final _msgCtl = new TextEditingController();
   final _focusNode = new FocusNode();
   bool _isTyping = false;
-
   List<ChatMessage> _messages = [];
+  ChatService chatService;
+  SocketService socketService;
+  AuthService authService;
 
-  _onSubmit(String text) {
-    if (text.length == 0) return;
+  @override
+  void initState() {
+    super.initState();
+    this.chatService = Provider.of<ChatService>(context, listen: false);
+    this.socketService = Provider.of<SocketService>(context, listen: false);
+    this.authService = Provider.of<AuthService>(context, listen: false);
 
-    final msg = new ChatMessage(
-      message: text,
-      uid: _messages.length.isEven ? '123' : '1234',
+    this.socketService.socket.on('message-sent', _onMessageListener);
+  }
+
+  void _onMessageListener(dynamic payload) {
+    ChatMessage message = new ChatMessage(
+      message: payload['message'],
+      uid: payload['from'],
       animationController: new AnimationController(
         duration: Duration(milliseconds: 250),
         vsync: this,
       ),
     );
 
-    _messages.insert(0, msg);
-    msg.animationController.forward();
+    setState(() {
+      _messages.insert(0, message);
+    });
+    message.animationController.forward();
 
     _msgCtl.clear();
     setState(() => _isTyping = false);
@@ -38,7 +54,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    // TODO cancel socket subscription
+    this.socketService.socket.off('message-sent');
+
     for (ChatMessage msg in _messages) {
       msg.animationController.dispose();
     }
@@ -47,22 +64,28 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final toUser = this.chatService.toUser;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         brightness: Brightness.light,
+        automaticallyImplyLeading: false,
         centerTitle: true,
         elevation: 1,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              child: Text('Te', style: TextStyle(fontSize: 12)),
+              child: Text(
+                toUser.name.substring(0, 2),
+                style: TextStyle(fontSize: 12),
+              ),
               backgroundColor: Colors.blue[100],
             ),
             SizedBox(width: 10),
             Text(
-              'Maribelita Sánchez',
+              toUser.name,
               style: TextStyle(color: Colors.black87),
             )
           ],
@@ -139,5 +162,31 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  _onSubmit(String text) {
+    if (text.length == 0) return;
+
+    final msg = new ChatMessage(
+      message: text,
+      uid: this.authService.user.uid,
+      animationController: new AnimationController(
+        duration: Duration(milliseconds: 250),
+        vsync: this,
+      ),
+    );
+
+    _messages.insert(0, msg);
+    msg.animationController.forward();
+
+    _msgCtl.clear();
+    setState(() => _isTyping = false);
+    _focusNode.requestFocus();
+
+    this.socketService.emit('message-sent', {
+      'from': this.authService.user.uid,
+      'to': this.chatService.toUser.uid,
+      'message': text,
+    });
   }
 }
