@@ -5,6 +5,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:real_time_chat/models/user.dart';
 import 'package:real_time_chat/services/auth.service.dart';
 import 'package:real_time_chat/services/socket.service.dart';
+import 'package:real_time_chat/services/users.service.dart';
 
 class UsersPage extends StatefulWidget {
   @override
@@ -12,33 +13,25 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
-  final users = <User>[
-    User(
-      email: 'esteban.sanvaz@gmail.com',
-      name: 'Esteban Sánchez',
-      online: true,
-      uid: 'esteban',
-    ),
-    User(
-      email: 'manuel@gmail.com',
-      name: 'Manuel Sánchez',
-      online: false,
-      uid: 'manuel',
-    ),
-    User(
-      email: 'maribel@gmail.com',
-      name: 'Maribelita Sánchez',
-      online: true,
-      uid: 'maribel',
-    ),
-  ];
-
   RefreshController _refreshCtrl = RefreshController(initialRefresh: false);
+  final userService = new UsersService();
+  List<User> users = [];
 
   void _onRefresh() async {
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
-    _refreshCtrl.refreshCompleted();
+    try {
+      this.users = await userService.getUsers();
+      print('${this.users}');
+      setState(() {});
+      _refreshCtrl.refreshCompleted();
+    } catch (e) {
+      _refreshCtrl.refreshFailed();
+    }
+  }
+
+  @override
+  void initState() {
+    this._onRefresh();
+    super.initState();
   }
 
   @override
