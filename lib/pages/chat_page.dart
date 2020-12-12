@@ -2,19 +2,33 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:real_time_chat/widgets/chat_msg.dart';
 
 class ChatPage extends StatefulWidget {
   @override
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   final _msgCtl = new TextEditingController();
   final _focusNode = new FocusNode();
   bool _isTyping = false;
 
+  List<ChatMessage> _messages = [];
+
   _onSubmit(String text) {
-    print(text);
+    final msg = new ChatMessage(
+      message: text,
+      uid: _messages.length.isEven ? '123' : '1234',
+      animationController: new AnimationController(
+        duration: Duration(milliseconds: 250),
+        vsync: this,
+      ),
+    );
+
+    _messages.insert(0, msg);
+    msg.animationController.forward();
+
     _msgCtl.clear();
     setState(() => _isTyping = false);
     _focusNode.requestFocus();
@@ -44,6 +58,7 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
       body: Container(
+        padding: EdgeInsets.only(top: 10),
         child: Column(
           children: [
             Flexible(
@@ -51,7 +66,8 @@ class _ChatPageState extends State<ChatPage> {
                 onTap: () => _focusNode.unfocus(),
                 child: ListView.builder(
                   physics: BouncingScrollPhysics(),
-                  itemBuilder: (_, i) => Text('$i'),
+                  itemBuilder: (_, i) => _messages[i],
+                  itemCount: _messages.length,
                   reverse: true,
                 ),
               ),
