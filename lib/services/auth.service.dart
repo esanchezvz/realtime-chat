@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:real_time_chat/global/environment.dart';
 import 'package:real_time_chat/models/login_response.dart';
 import 'package:real_time_chat/models/register_user_response.dart';
+import 'package:real_time_chat/models/token_response.dart';
 import 'package:real_time_chat/models/user.dart';
 
 class AuthService with ChangeNotifier {
@@ -99,6 +100,29 @@ class AuthService with ChangeNotifier {
     };
 
     return map;
+  }
+
+  Future<bool> isLoggedIn() async {
+    final token = await _storage.read(key: 'token');
+
+    final res = await http.get('${Environment.apiUrl}/auth/token', headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    });
+
+    print(res.body);
+
+    if (res.statusCode == 200) {
+      final response = tokenResponseFromJson(res.body);
+      this.user = response.data.user;
+      await this._saveToken(response.data.token);
+
+      return true;
+    }
+
+    await this.logout();
+
+    return false;
   }
 
   Future logout() async {
