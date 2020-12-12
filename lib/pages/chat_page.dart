@@ -17,6 +17,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   List<ChatMessage> _messages = [];
 
   _onSubmit(String text) {
+    if (text.length == 0) return;
+
     final msg = new ChatMessage(
       message: text,
       uid: _messages.length.isEven ? '123' : '1234',
