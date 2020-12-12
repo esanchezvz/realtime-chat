@@ -28,16 +28,17 @@ class _ChatPageState extends State<ChatPage> {
         brightness: Brightness.light,
         centerTitle: true,
         elevation: 1,
-        title: Column(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
               child: Text('Te', style: TextStyle(fontSize: 12)),
               backgroundColor: Colors.blue[100],
-              maxRadius: 14,
             ),
+            SizedBox(width: 10),
             Text(
               'Maribelita Sánchez',
-              style: TextStyle(color: Colors.black87, fontSize: 12),
+              style: TextStyle(color: Colors.black87),
             )
           ],
         ),
