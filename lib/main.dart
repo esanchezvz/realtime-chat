@@ -18,7 +18,7 @@ class RealTimeChatApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Chat App',
-      initialRoute: 'login',
+      initialRoute: 'users',
       routes: appRoutes,
     );
   }
