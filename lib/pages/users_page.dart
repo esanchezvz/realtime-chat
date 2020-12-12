@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:real_time_chat/models/user.dart';
 
@@ -28,6 +29,14 @@ class _UsersPageState extends State<UsersPage> {
       uid: 'maribel',
     ),
   ];
+
+  RefreshController _refreshCtrl = RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshCtrl.refreshCompleted();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,27 +73,40 @@ class _UsersPageState extends State<UsersPage> {
           )
         ],
       ),
-      body: SafeArea(
+      body: SmartRefresher(
+        controller: _refreshCtrl,
+        enablePullDown: true,
+        onRefresh: _onRefresh,
+        header: WaterDropHeader(
+          complete: Icon(Icons.check, color: Colors.blue[400]),
+          waterDropColor: Colors.blue[400],
+        ),
         child: ListView.separated(
           physics: BouncingScrollPhysics(),
-          itemBuilder: (_, i) => ListTile(
-            title: Text(users[i].name),
-            leading: CircleAvatar(
-              child: Text(
-                users[i].name.substring(0, 2),
-              ),
-            ),
-            trailing: Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(
-                color: users[i].online ? Colors.green[300] : Colors.red,
-                borderRadius: BorderRadius.circular(100),
-              ),
-            ),
-          ),
+          itemBuilder: (_, i) => _userListTile(users[i]),
           separatorBuilder: (_, i) => Divider(),
           itemCount: users.length,
+        ),
+      ),
+    );
+  }
+
+  ListTile _userListTile(User user) {
+    return ListTile(
+      title: Text(user.name),
+      subtitle: Text(user.email),
+      leading: CircleAvatar(
+        backgroundColor: Colors.blue[100],
+        child: Text(
+          user.name.substring(0, 2),
+        ),
+      ),
+      trailing: Container(
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(
+          color: user.online ? Colors.green[300] : Colors.red,
+          borderRadius: BorderRadius.circular(100),
         ),
       ),
     );
