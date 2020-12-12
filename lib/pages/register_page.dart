@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:real_time_chat/services/auth.service.dart';
+import 'package:real_time_chat/utils/alert.dart';
 
 import 'package:real_time_chat/widgets/input_field.dart';
 import 'package:real_time_chat/widgets/logo.dart';
@@ -73,10 +76,29 @@ class _Form extends StatefulWidget {
 class __FormState extends State<_Form> {
   final emailCtrl = TextEditingController();
   final nameCtrl = TextEditingController();
-  final passwordController = TextEditingController();
+  final passwordCtrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
+    Future<void> _onSubmit() async {
+      FocusScope.of(context).unfocus();
+
+      final res = await authService.register(
+        nameCtrl.text.trim(),
+        emailCtrl.text.trim(),
+        passwordCtrl.text.trim(),
+      );
+
+      if (res['success'] == true) {
+        // TODO connect to socket
+        Navigator.pushReplacementNamed(context, 'users');
+      } else {
+        alert(context, 'Ooops', '${res['message']}');
+      }
+    }
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
       child: Column(
@@ -101,22 +123,17 @@ class __FormState extends State<_Form> {
             icon: Icons.lock_outline,
             placeholder: 'Contraseña',
             keyboardType: TextInputType.text,
-            textController: passwordController,
+            textController: passwordCtrl,
             obscure: true,
             inputAction: TextInputAction.done,
-            onSubmitted: (_) {
-              print('Handle form submission!');
-            },
+            onSubmitted: (_) async => await _onSubmit(),
           ),
           RaisedButton(
             elevation: 2,
             highlightElevation: 5,
             color: Colors.blue,
             shape: StadiumBorder(),
-            onPressed: () {
-              print(emailCtrl.text);
-              print(passwordController.text);
-            },
+            onPressed: authService.authenticating ? null : _onSubmit,
             child: Container(
               width: double.infinity,
               child: Center(

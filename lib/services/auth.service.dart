@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:real_time_chat/global/environment.dart';
 import 'package:real_time_chat/models/login_response.dart';
+import 'package:real_time_chat/models/register_user_response.dart';
 import 'package:real_time_chat/models/user.dart';
 
 class AuthService with ChangeNotifier {
@@ -57,6 +58,47 @@ class AuthService with ChangeNotifier {
     }
 
     return false;
+  }
+
+  Future<Map<String, dynamic>> register(
+    String name,
+    String email,
+    String password,
+  ) async {
+    this.authenticating = true;
+    final data = {
+      'name': name,
+      'email': email,
+      'password': password,
+    };
+
+    final res = await http.post(
+      '${Environment.apiUrl}/auth/register',
+      body: jsonEncode(data),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    this.authenticating = false;
+    if (res.statusCode == 200) {
+      final response = registerUserResponseFromJson(res.body);
+      this.user = response.data.user;
+      await this._saveToken(response.data.token);
+
+      final map = {
+        'success': true,
+        'message': '',
+      };
+
+      return map;
+    }
+    final map = {
+      'success': false,
+      'message': jsonDecode(res.body)['message'] != null
+          ? jsonDecode(res.body)['message']
+          : 'Revisa que tus credenciales sean correctas.',
+    };
+
+    return map;
   }
 
   Future logout() async {
